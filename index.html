@@ -4,7 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Selfie Generator with Crop</title>
+
+  <!-- Favicon (Browser Tab Icon) -->
+  <link rel="icon" type="image/png" href="9094.jpg">
+
+  <!-- Open Graph Meta Tags for WhatsApp/Facebook/LinkedIn Previews -->
+  <meta property="og:title" content="Selfie Generator with Crop">
+  <meta property="og:description" content="Create and crop your campaign selfie easily.">
+  <meta property="og:image" content="https://your-domain.com/preview-image.png">
+  <meta property="og:url" content="https://sikotargraphics.github.io/GDV/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card (for Twitter/X share) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Selfie Generator with Crop">
+  <meta name="twitter:description" content="Create and crop your campaign selfie easily.">
+  <meta name="twitter:image" content="https://your-domain.com/preview-image.png">
+
+  <!-- Cropper.js CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
   <style>
     body { 
       font-family: Arial, sans-serif; 
@@ -44,8 +63,6 @@
       cursor: pointer; 
     }
     button:hover { background: #e65c00; }
-
-    /* Crop modal */
     #cropModal {
       display: none; 
       position: fixed; 
@@ -72,8 +89,6 @@
       object-fit: contain; 
     }
     .cropper-view-box, .cropper-face { border-radius: 50% !important; }
-
-    /* Responsive adjustments */
     @media (max-width: 600px) {
       .box { padding: 15px; }
       input, button { font-size: 14px; padding: 8px; }
@@ -89,7 +104,6 @@
     <button id="download">Download Selfie</button>
   </div>
 
-  <!-- Crop Modal -->
   <div id="cropModal">
     <div class="modal-content">
       <img id="cropImage">
@@ -108,39 +122,29 @@
     const ctx = canvas.getContext("2d");
     const downloadBtn = document.getElementById("download");
 
-    // Adjust canvas size dynamically based on screen width
     function resizeCanvas() {
       const width = Math.min(window.innerWidth * 0.8, 600);
       canvas.width = width;
-      canvas.height = width; // keep square ratio
+      canvas.height = width; 
       drawCanvas();
     }
 
     let userImage = null;
     let cropper;
-
-    // Crop modal elements
     const cropModal = document.getElementById("cropModal");
     const cropImage = document.getElementById("cropImage");
     const cropBtn = document.getElementById("cropBtn");
     const cancelCrop = document.getElementById("cancelCrop");
 
-    // Load background
     const bgImg = new Image();
-    bgImg.src = "2.jpg"; // background image
-
-    // Default placeholder
+    bgImg.src = "2.jpg";
     const placeholder = new Image();
     placeholder.src = "1.png"; 
     userImage = placeholder;
 
     function drawCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Background
       ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-
-      // Footer branding
       ctx.fillStyle = "#000";
       ctx.fillRect(0, canvas.height - 30, canvas.width, 80);
       ctx.fillStyle = "#fff";
@@ -148,7 +152,6 @@
       ctx.textAlign = "center";
       ctx.fillText("✅ Powered by Sikotar Graphics", canvas.width / 2, canvas.height - 10);
 
-      // User image
       if (userImage) {
         const size = canvas.width * 0.25;
         const x = canvas.width - size - 30;
@@ -161,14 +164,12 @@
         ctx.drawImage(userImage, x, y, size, size);
         ctx.restore();
 
-        // Border
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 5;
         ctx.beginPath();
         ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI*2);
         ctx.stroke();
 
-        // Name
         if (usernameInput.value) {
           ctx.fillStyle = "#fff";
           ctx.font = `bold ${canvas.width * 0.04}px Arial`;
@@ -178,7 +179,6 @@
       }
     }
 
-    // Upload → Open Crop Modal
     upload.addEventListener("change", e => {
       const file = e.target.files[0];
       if (!file) return;
@@ -205,7 +205,6 @@
       reader.readAsDataURL(file);
     });
 
-    // Crop & Save
     cropBtn.addEventListener("click", () => {
       const canvasCrop = cropper.getCroppedCanvas({ width: 300, height: 300 });
       userImage = new Image();
@@ -215,16 +214,13 @@
       cropper.destroy();
     });
 
-    // Cancel Crop
     cancelCrop.addEventListener("click", () => {
       cropModal.style.display = "none";
       cropper.destroy();
     });
 
-    // Redraw when typing
     usernameInput.addEventListener("input", drawCanvas);
 
-    // Download selfie
     downloadBtn.addEventListener("click", () => {
       const link = document.createElement("a");
       link.download = "selfie.png";
@@ -232,13 +228,9 @@
       link.click();
     });
 
-    // Resize canvas when window changes
     window.addEventListener("resize", resizeCanvas);
-
     bgImg.onload = drawCanvas;
     placeholder.onload = drawCanvas;
-
-    // Initial resize
     resizeCanvas();
   </script>
 </body>
