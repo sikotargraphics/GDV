@@ -5,20 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>શ્રી ગોગા ધામ વિજયનગર</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/jpg" href="https://sikotargraphics.github.io/GDV/9094.jpg">
-
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="શ્રી ગોગા ધામ વિજયનગર">
-  <meta property="og:image" content="https://sikotargraphics.github.io/GDV/90.png">
-  <meta property="og:url" content="https://sikotargraphics.github.io/GDV/">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Selfie Generator with Crop">
-  <meta name="twitter:image" content="https://sikotargraphics.github.io/GDV/90.png">
-
   <!-- Cropper.js CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
@@ -89,10 +75,6 @@
       object-fit: contain; 
     }
     .cropper-view-box, .cropper-face { border-radius: 50% !important; }
-    @media (max-width: 600px) {
-      .box { padding: 15px; }
-      input, button { font-size: 14px; padding: 8px; }
-    }
   </style>
 </head>
 <body>
@@ -124,19 +106,10 @@
     const ctx = canvas.getContext("2d");
     const downloadBtn = document.getElementById("download");
 
-    function resizeCanvas() {
-      const width = Math.min(window.innerWidth * 0.8, 600);
-      canvas.width = width;
-      canvas.height = width; 
-      drawCanvas();
-    }
-
     let userImage = null;
     let cropper;
     const cropModal = document.getElementById("cropModal");
     const cropImage = document.getElementById("cropImage");
-    const cropBtn = document.getElementById("cropBtn");
-    const cancelCrop = document.getElementById("cancelCrop");
 
     const bgImg = new Image();
     bgImg.crossOrigin = "anonymous";
@@ -147,13 +120,22 @@
     placeholder.src = "https://sikotargraphics.github.io/GDV/1.png";
     userImage = placeholder;
 
+    function resizeCanvas() {
+      const width = Math.min(window.innerWidth * 0.8, 600);
+      canvas.width = width;
+      canvas.height = width; 
+      drawCanvas();
+    }
+
     function drawCanvas() {
+      if (!canvas.width) return;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw background
       ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
 
-     
-      
-
+      // Draw user photo in circle
       if (userImage) {
         const size = canvas.width * 0.25;
         const x = canvas.width - size - 30;
@@ -172,25 +154,29 @@
         ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI*2);
         ctx.stroke();
 
-        if (usernameInput.value) {
-          const text = usernameInput.value;
+        // Draw text if entered
+        if (usernameInput.value.trim() !== "") {
+          const text = usernameInput.value.trim();
           ctx.font = `bold ${canvas.width * 0.045}px Arial`;
           ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
           const textWidth = ctx.measureText(text).width;
           const textX = x + size/2;
           const textY = y + size + 40;
 
-          // Draw dark red box behind the name
+          // Background box behind text
           ctx.fillStyle = "darkred";
-          ctx.fillRect(textX - textWidth/2 - 10, textY - 30, textWidth + 20, 40);
+          ctx.fillRect(textX - textWidth/2 - 12, textY - 20, textWidth + 24, 40);
 
-          // Draw name text over the box
-          ctx.fillStyle = "#fff";
+          // White text
+          ctx.fillStyle = "#ffffff";
           ctx.fillText(text, textX, textY);
         }
       }
     }
 
+    // Upload image + crop
     upload.addEventListener("change", e => {
       const file = e.target.files[0];
       if (!file) return;
@@ -207,18 +193,14 @@
           background: false,
           guides: false,
           autoCropArea: 0.9,
-          zoomOnWheel: true,
-          ready() {
-            document.querySelector(".cropper-view-box").style.borderRadius = "50%";
-            document.querySelector(".cropper-face").style.borderRadius = "50%";
-          }
+          zoomOnWheel: true
         });
       };
       reader.readAsDataURL(file);
     });
 
-    cropBtn.addEventListener("click", () => {
-      const canvasCrop = cropper.getCroppedCanvas({ width: 300, height: 300 });
+    document.getElementById("cropBtn").addEventListener("click", () => {
+      const canvasCrop = cropper.getCroppedCanvas({ width: 500, height: 500 });
       userImage = new Image();
       userImage.onload = drawCanvas;
       userImage.src = canvasCrop.toDataURL("image/png");
@@ -226,7 +208,7 @@
       cropper.destroy();
     });
 
-    cancelCrop.addEventListener("click", () => {
+    document.getElementById("cancelCrop").addEventListener("click", () => {
       cropModal.style.display = "none";
       cropper.destroy();
     });
@@ -247,7 +229,3 @@
   </script>
 </body>
 </html>
-
-
-
-
