@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Selfie Generator with Crop</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; }
+    .box { background: #fff; max-width: 420px; margin: 20px auto; padding: 20px;
+           border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    canvas { width: 100%; margin-top: 10px; border: 2px solid #ccc; border-radius: 12px; }
+    input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px;
+                    border: 1px solid #aaa; font-size: 16px; }
+    button { background: #ff6600; color: white; border: none; cursor: pointer; }
+    button:hover { background: #e65c00; }
+
+    /* Crop modal */
+    #cropModal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    #cropModal .modal-content {
+      background: #fff; padding: 10px; border-radius: 8px;
+      max-width: 90vw; max-height: 90vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    #cropImage { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
+    .cropper-view-box, .cropper-face { border-radius: 50% !important; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📸 Campaign Selfie Generator</h2>
+    <input type="file" id="upload" accept="image/*">
+    <input type="text" id="username" placeholder="Enter your name">
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <button id="download">Download Selfie</button>
+  </div>
+
+  <!-- Crop Modal -->
+  <div id="cropModal">
+    <div class="modal-content">
+      <img id="cropImage">
+      <div style="margin-top:10px;">
+        <button id="cropBtn">Crop & Save</button>
+        <button id="cancelCrop">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script>
+    const upload = document.getElementById("upload");
+    const usernameInput = document.getElementById("username");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const downloadBtn = document.getElementById("download");
+
+    let userImage = null;
+    let cropper;
+
+    // Crop modal elements
+    const cropModal = document.getElementById("cropModal");
+    const cropImage = document.getElementById("cropImage");
+    const cropBtn = document.getElementById("cropBtn");
+    const cancelCrop = document.getElementById("cancelCrop");
+
+    // Load background
+    const bgImg = new Image();
+    bgImg.src = "2.jpg"; // background image
+
+    // Default placeholder
+    const placeholder = new Image();
+    placeholder.src = "1.png"; 
+    userImage = placeholder;
+
+    function drawCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      // Footer branding
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, canvas.height - 30, canvas.width, 80);
+      ctx.fillStyle = "#fff";
+      ctx.font = "22px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("✅ Powered by Sikotar Graphics", canvas.width / 2, canvas.height - 10);
+
+      // User image
+      if (userImage) {
+        const size = 150;
+        const x = canvas.width - size - 30;
+        const y = canvas.height - size - 90;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI*2);
+        ctx.clip();
+        ctx.drawImage(userImage, x, y, size, size);
+        ctx.restore();
+
+        // Border
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI*2);
+        ctx.stroke();
+
+        // Name
+        if (usernameInput.value) {
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 22px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(usernameInput.value, x + size/2, y + size + 40);
+        }
+      }
+    }
+
+    // Upload → Open Crop Modal
+    upload.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        cropImage.src = ev.target.result;
+        cropModal.style.display = "flex";
+
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(cropImage, {
+          aspectRatio: 1,
+          viewMode: 0,
+          dragMode: "move",
+          background: false,
+          guides: false,
+          autoCropArea: 0.8,
+          zoomOnWheel: true,
+          ready() {
+            document.querySelector(".cropper-view-box").style.borderRadius = "50%";
+            document.querySelector(".cropper-face").style.borderRadius = "50%";
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Crop & Save
+    cropBtn.addEventListener("click", () => {
+      const canvasCrop = cropper.getCroppedCanvas({ width: 300, height: 300 });
+      userImage = new Image();
+      userImage.onload = drawCanvas;
+      userImage.src = canvasCrop.toDataURL();
+      cropModal.style.display = "none";
+      cropper.destroy();
+    });
+
+    // Cancel Crop
+    cancelCrop.addEventListener("click", () => {
+      cropModal.style.display = "none";
+      cropper.destroy();
+    });
+
+    // Redraw when typing
+    usernameInput.addEventListener("input", drawCanvas);
+
+    // ✅ Download selfie (from your first code)
+    downloadBtn.addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.download = "selfie.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+
+    bgImg.onload = drawCanvas;
+    placeholder.onload = drawCanvas;
+  </script>
+</body>
+</html>
