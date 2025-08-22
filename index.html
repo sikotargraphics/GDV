@@ -1,31 +1,30 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selfie Generator with Crop</title>
+  <title>શ્રી ગોગા ધામ વિજયનગર</title>
 
-  <!-- Favicon (Browser Tab Icon) -->
-  <link rel="icon" type="image/jpg" href="9094.jpg">
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpg" href="https://sikotargraphics.github.io/GDV/9094.jpg">
 
-  <!-- Open Graph Meta Tags for WhatsApp/Facebook/LinkedIn Previews -->
+  <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="શ્રી ગોગા ધામ વિજયનગર">
-  <meta property="og:image" content="90.png">
+  <meta property="og:image" content="https://sikotargraphics.github.io/GDV/90.png">
   <meta property="og:url" content="https://sikotargraphics.github.io/GDV/">
   <meta property="og:type" content="website">
 
-  <!-- Twitter Card (for Twitter/X share) -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Selfie Generator with Crop">
-
-  <meta name="twitter:image" content="https://your-domain.com/preview-image.png">
+  <meta name="twitter:image" content="https://sikotargraphics.github.io/GDV/90.png">
 
   <!-- Cropper.js CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
   <style>
     body { 
-      font-family: poppins, sans-serif; 
+      font-family: Poppins, sans-serif; 
       text-align: center; 
       background: #f0f0f0; 
       margin: 0; padding: 0;
@@ -62,6 +61,8 @@
       cursor: pointer; 
     }
     button:hover { background: #e65c00; }
+
+    /* Crop Modal */
     #cropModal {
       display: none; 
       position: fixed; 
@@ -103,6 +104,7 @@
     <button id="download">Download Selfie</button>
   </div>
 
+  <!-- Crop Modal -->
   <div id="cropModal">
     <div class="modal-content">
       <img id="cropImage">
@@ -113,6 +115,7 @@
     </div>
   </div>
 
+  <!-- Cropper.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script>
     const upload = document.getElementById("upload");
@@ -135,17 +138,23 @@
     const cropBtn = document.getElementById("cropBtn");
     const cancelCrop = document.getElementById("cancelCrop");
 
+    // Load background & placeholder from your GitHub repo
     const bgImg = new Image();
-    bgImg.src = "2.jpg";
+    bgImg.crossOrigin = "anonymous";
+    bgImg.src = "https://sikotargraphics.github.io/GDV/2.jpg";
+
     const placeholder = new Image();
-    placeholder.src = "1.png"; 
+    placeholder.crossOrigin = "anonymous";
+    placeholder.src = "https://sikotargraphics.github.io/GDV/1.png";
     userImage = placeholder;
 
     function drawCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
       ctx.fillStyle = "#000";
       ctx.fillRect(0, canvas.height - 30, canvas.width, 80);
+
       ctx.fillStyle = "#fff";
       ctx.font = `${canvas.width * 0.04}px Arial`;
       ctx.textAlign = "center";
@@ -189,11 +198,11 @@
         if (cropper) cropper.destroy();
         cropper = new Cropper(cropImage, {
           aspectRatio: 1,
-          viewMode: 0,
+          viewMode: 1,
           dragMode: "move",
           background: false,
           guides: false,
-          autoCropArea: 0.8,
+          autoCropArea: 0.9,
           zoomOnWheel: true,
           ready() {
             document.querySelector(".cropper-view-box").style.borderRadius = "50%";
@@ -208,7 +217,7 @@
       const canvasCrop = cropper.getCroppedCanvas({ width: 300, height: 300 });
       userImage = new Image();
       userImage.onload = drawCanvas;
-      userImage.src = canvasCrop.toDataURL();
+      userImage.src = canvasCrop.toDataURL("image/png");
       cropModal.style.display = "none";
       cropper.destroy();
     });
@@ -234,7 +243,5 @@
   </script>
 </body>
 </html>
-
-
 
 
