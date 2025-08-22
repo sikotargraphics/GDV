@@ -163,10 +163,10 @@
 
           const textWidth = ctx.measureText(text).width;
           const textX = x + size/2;
-          const textY = y + size + 40;
+          const textY = y + size + 30; // moved 15px down
 
-          // Background box behind text
-          ctx.fillStyle = "darkred";
+          // Background box behind text (updated color from uploaded image #4d0606)
+          ctx.fillStyle = "#4d0606";
           ctx.fillRect(textX - textWidth/2 - 12, textY - 20, textWidth + 24, 40);
 
           // White text
