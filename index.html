@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -138,7 +138,6 @@
     const cropBtn = document.getElementById("cropBtn");
     const cancelCrop = document.getElementById("cancelCrop");
 
-    // Load background & placeholder from your GitHub repo
     const bgImg = new Image();
     bgImg.crossOrigin = "anonymous";
     bgImg.src = "https://sikotargraphics.github.io/GDV/2.jpg";
@@ -179,10 +178,20 @@
         ctx.stroke();
 
         if (usernameInput.value) {
-          ctx.fillStyle = "#fff";
-          ctx.font = `bold ${canvas.width * 0.04}px Arial`;
+          const text = usernameInput.value;
+          ctx.font = `bold ${canvas.width * 0.045}px Arial`;
           ctx.textAlign = "center";
-          ctx.fillText(usernameInput.value, x + size/2, y + size + 40);
+          const textWidth = ctx.measureText(text).width;
+          const textX = x + size/2;
+          const textY = y + size + 40;
+
+          // Draw dark red box behind the name
+          ctx.fillStyle = "darkred";
+          ctx.fillRect(textX - textWidth/2 - 10, textY - 30, textWidth + 20, 40);
+
+          // Draw name text over the box
+          ctx.fillStyle = "#fff";
+          ctx.fillText(text, textX, textY);
         }
       }
     }
@@ -243,5 +252,4 @@
   </script>
 </body>
 </html>
-
 
