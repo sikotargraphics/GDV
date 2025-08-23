@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=1024"> <!-- Force desktop layout on mobile -->
   <title>શ્રી ગોગા ધામ વિજયનગર</title>
 
   <!-- Cropper.js CSS -->
@@ -13,12 +13,13 @@
       font-family: Poppins, sans-serif; 
       text-align: center; 
       background: #f0f0f0; 
-      margin: 0; padding: 0;
+      margin: 0; 
+      padding: 0;
+      overflow-x: auto; /* allow scroll if screen is smaller */
     }
     .box { 
       background: #fff; 
-      max-width: 90%; 
-      width: 600px; 
+      width: 1024px;  /* fixed width same as desktop */
       margin: 20px auto; 
       padding: 20px;
       border-radius: 12px; 
@@ -30,7 +31,6 @@
       margin-top: 10px; 
       border: 2px solid #ccc; 
       border-radius: 12px; 
-      display: block;
     }
     input, button { 
       width: 100%; 
@@ -76,18 +76,6 @@
       object-fit: contain; 
     }
     .cropper-view-box, .cropper-face { border-radius: 50% !important; }
-
-    /* ✅ Mobile fix */
-    @media (max-width: 600px) {
-      .box {
-        width: 95%;
-        padding: 15px;
-      }
-      canvas {
-        max-width: 100%;
-        height: auto !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -134,7 +122,7 @@
     userImage = placeholder;
 
     function resizeCanvas() {
-      const width = Math.min(window.innerWidth * 0.9, 600);
+      const width = 600;   // fixed desktop size
       canvas.width = width;
       canvas.height = width; 
       drawCanvas();
@@ -176,7 +164,7 @@
 
           const textWidth = ctx.measureText(text).width;
           const textX = x + size/2;
-          const textY = y + size + 30; // fixed same as desktop
+          const textY = y + size + 30;
 
           // Background box behind text
           ctx.fillStyle = "#4d0606";
