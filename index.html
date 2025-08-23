@@ -30,6 +30,7 @@
       margin-top: 10px; 
       border: 2px solid #ccc; 
       border-radius: 12px; 
+      display: block;
     }
     input, button { 
       width: 100%; 
@@ -75,6 +76,18 @@
       object-fit: contain; 
     }
     .cropper-view-box, .cropper-face { border-radius: 50% !important; }
+
+    /* ✅ Mobile fix */
+    @media (max-width: 600px) {
+      .box {
+        width: 95%;
+        padding: 15px;
+      }
+      canvas {
+        max-width: 100%;
+        height: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -121,7 +134,7 @@
     userImage = placeholder;
 
     function resizeCanvas() {
-      const width = Math.min(window.innerWidth * 0.8, 600);
+      const width = Math.min(window.innerWidth * 0.9, 600);
       canvas.width = width;
       canvas.height = width; 
       drawCanvas();
@@ -163,9 +176,9 @@
 
           const textWidth = ctx.measureText(text).width;
           const textX = x + size/2;
-          const textY = y + size + 30; // moved 15px down
+          const textY = y + size + 30; // fixed same as desktop
 
-          // Background box behind text (updated color from uploaded image #4d0606)
+          // Background box behind text
           ctx.fillStyle = "#4d0606";
           ctx.fillRect(textX - textWidth/2 - 12, textY - 20, textWidth + 24, 40);
 
@@ -229,4 +242,3 @@
   </script>
 </body>
 </html>
-
